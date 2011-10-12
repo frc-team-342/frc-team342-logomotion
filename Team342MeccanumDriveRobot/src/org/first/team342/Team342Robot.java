@@ -38,6 +38,10 @@ public class Team342Robot extends SimpleRobot {
     public static final int DIO_CHANNEL_LIGHT_SENSOR_LEFT = 3;
     public static final int DIO_CHANNEL_LIGHT_SENSOR_CENTER = 4;
     public static final int DIO_CHANNEL_LIGHT_SENSOR_RIGHT = 5;
+    public static final int BUTTON_ROTATE_UP = 5;
+    public static final int BUTTON_ROTATE_DOWN = 3;
+    public static final int BUTTON_PULL_IN = 2;
+    
     private RobotDrive drive;
     private Joystick driveController;
     private Joystick armController;
@@ -52,8 +56,9 @@ public class Team342Robot extends SimpleRobot {
     public Team342Robot() {
         super();
 
-        this.driveController = new Joystick(3);
-
+        this.driveController = new Joystick(1);
+        this.armController = new Joystick(2);
+        
         this.leftFront = new Jaguar(DEFAULT_MODULE_SLOT, PWM_CHANNEL_LEFT_FRONT);
         this.leftRear = new Jaguar(DEFAULT_MODULE_SLOT, PWM_CHANNEL_LEFT_REAR);
         this.rightFront = new Jaguar(DEFAULT_MODULE_SLOT, PWM_CHANNEL_RIGHT_FRONT);
@@ -86,15 +91,25 @@ public class Team342Robot extends SimpleRobot {
 
             double rotation = this.driveController.getRawAxis(4);
             double armValue = this.armController.getY() * -1;
+            System.out.println("Arm Value: " + armValue);
             System.out.println("X: " + x + ", Y: " + y + ", Z: " + rotation);
 
             this.drive.mecanumDrive_Cartesian(x, y, rotation, 0);
             this.armMotor.set(armValue);
 
-            if (this.armController.getRawButton(5)) {
+            if (this.armController.getRawButton(BUTTON_PULL_IN)) {
+                this.topGripper.set(-0.5);
+                this.bottomGripper.set(-0.5);
+            } else if (this.armController.getRawButton(BUTTON_ROTATE_UP)) {
+                this.topGripper.set(-0.5);
+                this.bottomGripper.set(0.5);
+            } else if (this.armController.getRawButton(BUTTON_ROTATE_DOWN)) {
+                this.topGripper.set(0.5);
+                this.bottomGripper.set(-0.5);
+            } else if (this.armController.getTrigger()) {
                 this.topGripper.set(0.5);
                 this.bottomGripper.set(0.5);
-            } else {
+            } else {   
                 this.topGripper.set(0.0);
                 this.bottomGripper.set(0.0);
             }
