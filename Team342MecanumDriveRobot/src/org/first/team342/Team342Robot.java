@@ -9,6 +9,7 @@ package org.first.team342;
 import edu.wpi.first.wpilibj.Jaguar;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotDrive;
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.SimpleRobot;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.Timer;
@@ -53,11 +54,17 @@ public class Team342Robot extends SimpleRobot {
     private SpeedController topGripper;
     private SpeedController bottomGripper;
 
+    private Servo releaseArm;
+    private Servo releaseBot;
+
     public Team342Robot() {
         super();
 
         this.driveController = new Joystick(1);
         this.armController = new Joystick(2);
+
+        this.releaseArm = new Servo(DEFAULT_MODULE_SLOT, PWM_CHANNEL_MINIBOT_ARM_RELEASE);
+        this.releaseBot = new Servo(DEFAULT_MODULE_SLOT, PWM_CHANNEL_MINIBOT_RELEASE);
         
         this.leftFront = new Jaguar(DEFAULT_MODULE_SLOT, PWM_CHANNEL_LEFT_FRONT);
         this.leftRear = new Jaguar(DEFAULT_MODULE_SLOT, PWM_CHANNEL_LEFT_REAR);
@@ -113,6 +120,11 @@ public class Team342Robot extends SimpleRobot {
                 this.topGripper.set(0.0);
                 this.bottomGripper.set(0.0);
             }
+
+            if (this.driveController.getRawButton(2) && this.driveController.getTrigger()){
+                //release minibot
+            }else if(this.driveController.getTrigger()){
+                //release minibot arm
 
 
             Timer.delay(0.005);
