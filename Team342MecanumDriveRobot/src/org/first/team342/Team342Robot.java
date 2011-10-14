@@ -125,9 +125,10 @@ public class Team342Robot extends SimpleRobot {
                 //release minibot
             }else if(this.driveController.getTrigger()){
                 //release minibot arm
-
+            }
 
             Timer.delay(0.005);
         }
     }
+
 }
