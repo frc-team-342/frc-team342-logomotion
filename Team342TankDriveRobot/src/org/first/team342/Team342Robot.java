@@ -24,18 +24,18 @@ public class Team342Robot extends SimpleRobot {
 
     // Robot Constants.
     public static final int DIGITAL_MODULE_SLOT = 4;
-    
+
     // Speed Controller Constants.
     public static final int PWM_CHANNEL_LEFT_FRONT = 1;
     public static final int PWM_CHANNEL_RIGHT_FRONT = 2;
     public static final int PWM_CHANNEL_LEFT_REAR = 3;
     public static final int PWM_CHANNEL_RIGHT_REAR = 4;
-    
+
     // Joystick constants.
     public static final int JOYSTICK_PORT_LEFT = 0;
     public static final int JOYSTICK_PORT_RIGHT = 1;
     public static final int JOYSTICK_PORT_ARM = 2;
-    
+
     // Instance variables.
     private Joystick leftJoystick;
     private Joystick rightJoystick;
