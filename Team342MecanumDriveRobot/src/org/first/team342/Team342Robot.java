@@ -26,10 +26,14 @@ import edu.wpi.first.wpilibj.Victor;
 public class Team342Robot extends SimpleRobot {
 
     public static final int DEFAULT_MODULE_SLOT = 4;
+    
+    // Drive Motor Constants.
     public static final int PWM_CHANNEL_LEFT_FRONT = 1;
     public static final int PWM_CHANNEL_LEFT_REAR = 2;
     public static final int PWM_CHANNEL_RIGHT_FRONT = 3;
     public static final int PWM_CHANNEL_RIGHT_REAR = 4;
+    
+    // Arm Motor Constants.
     public static final int PWM_CHANNEL_GRIPPER_TOP = 6;
     public static final int PWM_CHANNEL_GRIPPER_BOTTOM = 7;
     public static final int PWM_CHANNEL_ARM_MOTOR = 10;
@@ -37,12 +41,18 @@ public class Team342Robot extends SimpleRobot {
     public static final int PWM_CHANNEL_MINIBOT_RELEASE = 9;
     public static final int DIO_CHANNEL_ARM_LIMIT_BOTTOM = 1;
     public static final int DIO_CHANNEL_ARM_LIMIT_TOP = 2;
-    public static final int DIO_CHANNEL_LIGHT_SENSOR_LEFT = 1;
-    public static final int DIO_CHANNEL_LIGHT_SENSOR_CENTER = 2;
-    public static final int DIO_CHANNEL_LIGHT_SENSOR_RIGHT = 3;
+
+    // Light Sensor Constants.
+    public static final int DIO_CHANNEL_LIGHT_SENSOR_LEFT = 3;
+    public static final int DIO_CHANNEL_LIGHT_SENSOR_CENTER = 4;
+    public static final int DIO_CHANNEL_LIGHT_SENSOR_RIGHT = 5;
+    
+    // Joystick Constants.
     public static final int BUTTON_ROTATE_UP = 5;
     public static final int BUTTON_ROTATE_DOWN = 3;
     public static final int BUTTON_PULL_IN = 2;
+    public static final int JOYSTICK_DRIVE_CONTROL = 1;
+    public static final int JOYSTICK_ARM_CONTROL = 2;
     
     private RobotDrive drive;
     private Joystick driveController;
@@ -68,9 +78,8 @@ public class Team342Robot extends SimpleRobot {
         this.leftSensor = new DigitalInput(DEFAULT_MODULE_SLOT, DIO_CHANNEL_LIGHT_SENSOR_LEFT);
         this.rightSensor = new DigitalInput(DEFAULT_MODULE_SLOT, DIO_CHANNEL_LIGHT_SENSOR_RIGHT);
         this.centerSensor = new DigitalInput(DEFAULT_MODULE_SLOT, DIO_CHANNEL_LIGHT_SENSOR_CENTER);
-
-        this.driveController = new Joystick(1);
-        this.armController = new Joystick(2);
+        this.driveController = new Joystick(JOYSTICK_DRIVE_CONTROL);
+        this.armController = new Joystick(JOYSTICK_ARM_CONTROL);
 
         this.releaseArm = new Servo(DEFAULT_MODULE_SLOT, PWM_CHANNEL_MINIBOT_ARM_RELEASE);
         this.releaseBot = new Servo(DEFAULT_MODULE_SLOT, PWM_CHANNEL_MINIBOT_RELEASE);
@@ -104,6 +113,7 @@ public class Team342Robot extends SimpleRobot {
                 System.out.println("Center Sensor on");
             }
         }
+        Timer.delay(0.005);
     }
 
     /**

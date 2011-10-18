@@ -1,3 +1,4 @@
+
 /*----------------------------------------------------------------------------*/
 /* Copyright (c) FIRST 2008. All Rights Reserved.                             */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
@@ -6,6 +7,7 @@
 /*----------------------------------------------------------------------------*/
 package org.first.team342;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Jaguar;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotDrive;
@@ -30,6 +32,10 @@ public class Team342Robot extends SimpleRobot {
     public static final int PWM_CHANNEL_RIGHT_FRONT = 2;
     public static final int PWM_CHANNEL_LEFT_REAR = 3;
     public static final int PWM_CHANNEL_RIGHT_REAR = 4;
+    // Light Sensor Constants.
+    public static final int DIO_CHANNEL_LIGHT_SENSOR_LEFT = 3;
+    public static final int DIO_CHANNEL_LIGHT_SENSOR_CENTER = 4;
+    public static final int DIO_CHANNEL_LIGHT_SENSOR_RIGHT = 5;
 
     // Joystick constants.
     public static final int JOYSTICK_PORT_LEFT = 0;
@@ -41,6 +47,13 @@ public class Team342Robot extends SimpleRobot {
     private Joystick rightJoystick;
     private Joystick armJoystick;
     private RobotDrive drive;
+    
+    //light sensors
+    private DigitalInput leftSensor;
+    private DigitalInput rightSensor;
+    private DigitalInput centerSensor;
+
+
 
     public Team342Robot() {
         super();
@@ -57,6 +70,10 @@ public class Team342Robot extends SimpleRobot {
         SpeedController leftRear = new Jaguar(DIGITAL_MODULE_SLOT, PWM_CHANNEL_LEFT_REAR);
         SpeedController rightRear = new Jaguar(DIGITAL_MODULE_SLOT, PWM_CHANNEL_RIGHT_REAR);
 
+        //Initialize Light Sensors As DIO
+        this.leftSensor = new DigitalInput(DIGITAL_MODULE_SLOT, DIO_CHANNEL_LIGHT_SENSOR_LEFT);
+        this.rightSensor = new DigitalInput(DIGITAL_MODULE_SLOT, DIO_CHANNEL_LIGHT_SENSOR_RIGHT);
+        this.centerSensor = new DigitalInput(DIGITAL_MODULE_SLOT, DIO_CHANNEL_LIGHT_SENSOR_CENTER);
         // Initialize Robot Drive.
         this.drive = new RobotDrive(leftFront, leftRear, rightFront, rightRear);
     }
@@ -67,9 +84,17 @@ public class Team342Robot extends SimpleRobot {
     public void autonomous() {
         System.out.println("In Autonomous Mode");
         while (isAutonomous() && isEnabled()) {
-            // Do something... perhaps make it dance.
-            Timer.delay(0.005);
+            if (this.leftSensor.get()){
+                System.out.println("Left Sensor on");
+            }
+            if (this.rightSensor.get()){
+                System.out.println("Right Sensor on");
+            }
+            if (this.centerSensor.get()){
+                System.out.println("Center Sensor on");
+            }
         }
+        Timer.delay(0.005);
     }
 
     /**
