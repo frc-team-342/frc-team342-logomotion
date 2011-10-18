@@ -6,6 +6,7 @@
 /*----------------------------------------------------------------------------*/
 package org.first.team342;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Jaguar;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotDrive;
@@ -36,9 +37,9 @@ public class Team342Robot extends SimpleRobot {
     public static final int PWM_CHANNEL_MINIBOT_RELEASE = 9;
     public static final int DIO_CHANNEL_ARM_LIMIT_BOTTOM = 1;
     public static final int DIO_CHANNEL_ARM_LIMIT_TOP = 2;
-    public static final int DIO_CHANNEL_LIGHT_SENSOR_LEFT = 3;
-    public static final int DIO_CHANNEL_LIGHT_SENSOR_CENTER = 4;
-    public static final int DIO_CHANNEL_LIGHT_SENSOR_RIGHT = 5;
+    public static final int DIO_CHANNEL_LIGHT_SENSOR_LEFT = 1;
+    public static final int DIO_CHANNEL_LIGHT_SENSOR_CENTER = 2;
+    public static final int DIO_CHANNEL_LIGHT_SENSOR_RIGHT = 3;
     public static final int BUTTON_ROTATE_UP = 5;
     public static final int BUTTON_ROTATE_DOWN = 3;
     public static final int BUTTON_PULL_IN = 2;
@@ -57,8 +58,16 @@ public class Team342Robot extends SimpleRobot {
     private Servo releaseArm;
     private Servo releaseBot;
 
+    private DigitalInput leftSensor;
+    private DigitalInput rightSensor;
+    private DigitalInput centerSensor;
+
     public Team342Robot() {
         super();
+
+        this.leftSensor = new DigitalInput(DEFAULT_MODULE_SLOT, DIO_CHANNEL_LIGHT_SENSOR_LEFT);
+        this.rightSensor = new DigitalInput(DEFAULT_MODULE_SLOT, DIO_CHANNEL_LIGHT_SENSOR_RIGHT);
+        this.centerSensor = new DigitalInput(DEFAULT_MODULE_SLOT, DIO_CHANNEL_LIGHT_SENSOR_CENTER);
 
         this.driveController = new Joystick(1);
         this.armController = new Joystick(2);
@@ -84,6 +93,17 @@ public class Team342Robot extends SimpleRobot {
      * This function is called once each time the robot enters autonomous mode.
      */
     public void autonomous() {
+        while(isAutonomous()&&isEnabled()){
+            if (this.leftSensor.get()){
+                System.out.println("Left Sensor on");
+            }
+            if (this.rightSensor.get()){
+                System.out.println("Right Sensor on");
+            }
+            if (this.centerSensor.get()){
+                System.out.println("Center Sensor on");
+            }
+        }
     }
 
     /**
@@ -130,5 +150,4 @@ public class Team342Robot extends SimpleRobot {
             Timer.delay(0.005);
         }
     }
-
 }

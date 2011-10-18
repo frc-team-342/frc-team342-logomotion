@@ -68,6 +68,7 @@ public class Team342Robot extends SimpleRobot {
         System.out.println("In Autonomous Mode");
         while (isAutonomous() && isEnabled()) {
             // Do something... perhaps make it dance.
+            Timer.delay(0.005);
         }
     }
 
