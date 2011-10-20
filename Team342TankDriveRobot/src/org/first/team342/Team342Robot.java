@@ -26,7 +26,6 @@ public class Team342Robot extends SimpleRobot {
 
     // Robot Constants.
     public static final int DIGITAL_MODULE_SLOT = 4;
-
     // Speed Controller Constants.
     public static final int PWM_CHANNEL_LEFT_FRONT = 1;
     public static final int PWM_CHANNEL_RIGHT_FRONT = 2;
@@ -36,24 +35,19 @@ public class Team342Robot extends SimpleRobot {
     public static final int DIO_CHANNEL_LIGHT_SENSOR_LEFT = 3;
     public static final int DIO_CHANNEL_LIGHT_SENSOR_CENTER = 4;
     public static final int DIO_CHANNEL_LIGHT_SENSOR_RIGHT = 5;
-
     // Joystick constants.
     public static final int JOYSTICK_PORT_LEFT = 0;
     public static final int JOYSTICK_PORT_RIGHT = 1;
     public static final int JOYSTICK_PORT_ARM = 2;
-
     // Instance variables.
     private Joystick leftJoystick;
     private Joystick rightJoystick;
     private Joystick armJoystick;
     private RobotDrive drive;
-    
     //light sensors
     private DigitalInput leftSensor;
     private DigitalInput rightSensor;
     private DigitalInput centerSensor;
-
-
 
     public Team342Robot() {
         super();
@@ -83,17 +77,34 @@ public class Team342Robot extends SimpleRobot {
      */
     public void autonomous() {
         System.out.println("In Autonomous Mode");
+
         while (isAutonomous() && isEnabled()) {
-            if (this.leftSensor.get()){
-                System.out.println("Left Sensor on");
-            }
-            if (this.rightSensor.get()){
-                System.out.println("Right Sensor on");
-            }
-            if (this.centerSensor.get()){
-                System.out.println("Center Sensor on");
+            boolean sensors[] = {rightSensor.get(), centerSensor.get(), leftSensor.get()};
+
+            int value = binaryMagic(sensors);
+
+            switch (value) {
+                case 0:
+                    break;
+                case 1:
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    break;
+                case 5:
+                    break;
+                case 6:
+                    break;
+                case 7:
+                    break;
+                default:
+                    break;
             }
         }
+
         Timer.delay(0.005);
     }
 
@@ -104,6 +115,26 @@ public class Team342Robot extends SimpleRobot {
         while (isOperatorControl() && isEnabled()) {
             this.drive.tankDrive(this.leftJoystick, this.rightJoystick);
             Timer.delay(0.005);
+        }
+    }
+
+    public int binaryMagic(boolean[] input) {
+        int output = 0;
+        int placeValue = 1;
+        for (int i = 0; i < input.length; i++) {
+            if (input[i]) {
+                output += placeValue;
+            }
+
+            placeValue *= 2;
+        }
+        return output;
+    }
+
+    private class madness {
+
+        public String method() {
+            return "There's a method to my madness...";
         }
     }
 }
