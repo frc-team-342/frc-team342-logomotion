@@ -118,12 +118,15 @@ public class Team342Robot extends SimpleRobot {
         while (isOperatorControl() && isEnabled()) {
             double x = this.driveController.getX();
             double y = this.driveController.getY();
-
-            double rotation = this.driveController.getRawAxis(4);
             double armValue = this.armController.getY() * -1;
-            System.out.println("Arm Value: " + armValue);
-            System.out.println("X: " + x + ", Y: " + y + ", Z: " + rotation);
-
+            double rotation = 0.0;
+            if(this.driveController.getRawButton(5)&&this.driveController.getRawButton(6)){
+                rotation = 0.0;
+            }else if (this.driveController.getRawButton(5)){
+                rotation = -0.75;
+            }else if(this.driveController.getRawButton(6)){
+                rotation = 0.75;
+            }
             this.drive.mecanumDrive_Cartesian(x, y, rotation, 0);
             this.armMotor.set(armValue);
 
@@ -150,7 +153,7 @@ public class Team342Robot extends SimpleRobot {
                 this.releaseArm.setAngle(0.0);
             } else {
                 if (this.releaseArm.getAngle() < 170) {
-                    this.releaseArm.setAngle(165.0);
+                    this.releaseArm.setAngle(170.0);
                 }
                 if (this.releaseBot.getAngle() < 170) {
                     this.releaseBot.setAngle(170.0);
