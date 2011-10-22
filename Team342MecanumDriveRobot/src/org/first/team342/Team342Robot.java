@@ -44,9 +44,10 @@ public class Team342Robot extends SimpleRobot {
     public static final int DIO_CHANNEL_LIGHT_SENSOR_CENTER = 4;
     public static final int DIO_CHANNEL_LIGHT_SENSOR_RIGHT = 5;
     // Joystick Constants.
-    public static final int BUTTON_ROTATE_UP = 5;
-    public static final int BUTTON_ROTATE_DOWN = 3;
-    public static final int BUTTON_PULL_IN = 2;
+    public static final int BUTTON_ROTATE_UP = 3;
+    public static final int BUTTON_ROTATE_DOWN = 2;
+    public static final int BUTTON_PULL_IN = 7;
+    public static final int BUTTON_SPIT = 8;
     public static final int JOYSTICK_DRIVE_CONTROL = 1;
     public static final int JOYSTICK_ARM_CONTROL = 2;
     private RobotDrive drive;
@@ -118,7 +119,7 @@ public class Team342Robot extends SimpleRobot {
         while (isOperatorControl() && isEnabled()) {
             double x = this.driveController.getX();
             double y = this.driveController.getY();
-            double armValue = this.armController.getY() * -1;
+            double armValue = this.driveController.getRawAxis(4)* -1;
             double rotation = 0.0;
             if(this.driveController.getRawButton(5)&&this.driveController.getRawButton(6)){
                 rotation = 0.0;
@@ -130,16 +131,16 @@ public class Team342Robot extends SimpleRobot {
             this.drive.mecanumDrive_Cartesian(x, y, rotation, 0);
             this.armMotor.set(armValue);
 
-            if (this.armController.getRawButton(BUTTON_PULL_IN)) {
+            if (this.driveController.getRawButton(BUTTON_PULL_IN)) {
                 this.topGripper.set(-0.5);
                 this.bottomGripper.set(-0.5);
-            } else if (this.armController.getRawButton(BUTTON_ROTATE_UP)) {
+            } else if (this.driveController.getRawButton(BUTTON_ROTATE_UP)) {
                 this.topGripper.set(-0.5);
                 this.bottomGripper.set(0.5);
-            } else if (this.armController.getRawButton(BUTTON_ROTATE_DOWN)) {
+            } else if (this.driveController.getRawButton(BUTTON_ROTATE_DOWN)) {
                 this.topGripper.set(0.5);
                 this.bottomGripper.set(-0.5);
-            } else if (this.armController.getTrigger()) {
+            } else if (this.driveController.getRawButton(BUTTON_SPIT)) {
                 this.topGripper.set(0.5);
                 this.bottomGripper.set(0.5);
             } else {
