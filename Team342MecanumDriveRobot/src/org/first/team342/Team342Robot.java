@@ -152,9 +152,9 @@ public class Team342Robot extends SimpleRobot {
             }
 
             if (this.driveController.getRawButton(2) && this.driveController.getTrigger()){
-                //release minibot
+                this.releaseBot.setAngle(0.0);
             }else if(this.driveController.getTrigger()){
-                //release minibot arm
+                this.releaseArm.setAngle(0.0);
             }
 
             Timer.delay(0.005);
