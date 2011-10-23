@@ -49,10 +49,8 @@ public class Team342Robot extends SimpleRobot {
     public static final int BUTTON_PULL_IN = 7;
     public static final int BUTTON_SPIT = 8;
     public static final int JOYSTICK_DRIVE_CONTROL = 1;
-    public static final int JOYSTICK_ARM_CONTROL = 2;
     private RobotDrive drive;
     private Joystick driveController;
-    private Joystick armController;
     private SpeedController leftFront;
     private SpeedController leftRear;
     private SpeedController rightFront;
@@ -73,7 +71,6 @@ public class Team342Robot extends SimpleRobot {
         this.rightSensor = new DigitalInput(DEFAULT_MODULE_SLOT, DIO_CHANNEL_LIGHT_SENSOR_RIGHT);
         this.centerSensor = new DigitalInput(DEFAULT_MODULE_SLOT, DIO_CHANNEL_LIGHT_SENSOR_CENTER);
         this.driveController = new Joystick(JOYSTICK_DRIVE_CONTROL);
-        this.armController = new Joystick(JOYSTICK_ARM_CONTROL);
 
         this.releaseArm = new Servo(DEFAULT_MODULE_SLOT, PWM_CHANNEL_MINIBOT_ARM_RELEASE);
         this.releaseBot = new Servo(DEFAULT_MODULE_SLOT, PWM_CHANNEL_MINIBOT_RELEASE);
