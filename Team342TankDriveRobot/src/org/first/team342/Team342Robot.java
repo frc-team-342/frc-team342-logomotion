@@ -130,11 +130,4 @@ public class Team342Robot extends SimpleRobot {
         }
         return output;
     }
-
-    private class madness {
-
-        public String method() {
-            return "There's a method to my madness...";
-        }
-    }
 }

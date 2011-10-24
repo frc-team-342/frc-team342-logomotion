@@ -145,20 +145,21 @@ public class Team342Robot extends SimpleRobot {
                 this.bottomGripper.set(0.0);
             }
 
-            if (this.driveController.getRawButton(2) && this.driveController.getTrigger()) {
+            if (this.driveController.getRawButton(2) && this.driveController.getTrigger()){
                 this.releaseBot.setAngle(0.0);
-            } else if (this.driveController.getTrigger()) {
+            }else if(this.driveController.getTrigger()){
                 this.releaseArm.setAngle(0.0);
-            } else {
-                if (this.releaseArm.getAngle() < 170) {
-                    this.releaseArm.setAngle(170.0);
-                }
-                if (this.releaseBot.getAngle() < 170) {
-                    this.releaseBot.setAngle(170.0);
-                }
             }
 
             Timer.delay(0.005);
         }
     }
+    public void disabled(){
+        while(isDisabled()){
+            this.armMotor.set(0.0);
+            this.drive.stopMotor();
+            Timer.delay(0.005);
+        }
+    }
+
 }
