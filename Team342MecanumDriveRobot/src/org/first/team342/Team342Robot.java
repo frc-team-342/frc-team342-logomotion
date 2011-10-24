@@ -26,13 +26,11 @@ import edu.wpi.first.wpilibj.Victor;
 public class Team342Robot extends SimpleRobot {
   
     public static final int DEFAULT_MODULE_SLOT = 4;
-    
     // Drive Motor Constants.
     public static final int PWM_CHANNEL_LEFT_FRONT = 1;
     public static final int PWM_CHANNEL_LEFT_REAR = 2;
     public static final int PWM_CHANNEL_RIGHT_FRONT = 3;
     public static final int PWM_CHANNEL_RIGHT_REAR = 4;
-    
     // Arm Motor Constants.
     public static final int PWM_CHANNEL_GRIPPER_TOP = 6;
     public static final int PWM_CHANNEL_GRIPPER_BOTTOM = 7;
@@ -41,22 +39,18 @@ public class Team342Robot extends SimpleRobot {
     public static final int PWM_CHANNEL_MINIBOT_RELEASE = 9;
     public static final int DIO_CHANNEL_ARM_LIMIT_BOTTOM = 1;
     public static final int DIO_CHANNEL_ARM_LIMIT_TOP = 2;
-
     // Light Sensor Constants.
     public static final int DIO_CHANNEL_LIGHT_SENSOR_LEFT = 3;
     public static final int DIO_CHANNEL_LIGHT_SENSOR_CENTER = 4;
     public static final int DIO_CHANNEL_LIGHT_SENSOR_RIGHT = 5;
-    
     // Joystick Constants.
-    public static final int BUTTON_ROTATE_UP = 5;
-    public static final int BUTTON_ROTATE_DOWN = 3;
-    public static final int BUTTON_PULL_IN = 2;
+    public static final int BUTTON_ROTATE_UP = 3;
+    public static final int BUTTON_ROTATE_DOWN = 2;
+    public static final int BUTTON_PULL_IN = 7;
+    public static final int BUTTON_SPIT = 8;
     public static final int JOYSTICK_DRIVE_CONTROL = 1;
-    public static final int JOYSTICK_ARM_CONTROL = 2;
-    
     private RobotDrive drive;
     private Joystick driveController;
-    private Joystick armController;
     private SpeedController leftFront;
     private SpeedController leftRear;
     private SpeedController rightFront;
@@ -64,10 +58,8 @@ public class Team342Robot extends SimpleRobot {
     private SpeedController armMotor;
     private SpeedController topGripper;
     private SpeedController bottomGripper;
-
     private Servo releaseArm;
     private Servo releaseBot;
-
     private DigitalInput leftSensor;
     private DigitalInput rightSensor;
     private DigitalInput centerSensor;
@@ -79,11 +71,10 @@ public class Team342Robot extends SimpleRobot {
         this.rightSensor = new DigitalInput(DEFAULT_MODULE_SLOT, DIO_CHANNEL_LIGHT_SENSOR_RIGHT);
         this.centerSensor = new DigitalInput(DEFAULT_MODULE_SLOT, DIO_CHANNEL_LIGHT_SENSOR_CENTER);
         this.driveController = new Joystick(JOYSTICK_DRIVE_CONTROL);
-        this.armController = new Joystick(JOYSTICK_ARM_CONTROL);
 
         this.releaseArm = new Servo(DEFAULT_MODULE_SLOT, PWM_CHANNEL_MINIBOT_ARM_RELEASE);
         this.releaseBot = new Servo(DEFAULT_MODULE_SLOT, PWM_CHANNEL_MINIBOT_RELEASE);
-        
+
         this.leftFront = new Jaguar(DEFAULT_MODULE_SLOT, PWM_CHANNEL_LEFT_FRONT);
         this.leftRear = new Jaguar(DEFAULT_MODULE_SLOT, PWM_CHANNEL_LEFT_REAR);
         this.rightFront = new Jaguar(DEFAULT_MODULE_SLOT, PWM_CHANNEL_RIGHT_FRONT);
@@ -102,14 +93,14 @@ public class Team342Robot extends SimpleRobot {
      * This function is called once each time the robot enters autonomous mode.
      */
     public void autonomous() {
-        while(isAutonomous()&&isEnabled()){
-            if (this.leftSensor.get()){
+        while (isAutonomous() && isEnabled()) {
+            if (this.leftSensor.get()) {
                 System.out.println("Left Sensor on");
             }
-            if (this.rightSensor.get()){
+            if (this.rightSensor.get()) {
                 System.out.println("Right Sensor on");
             }
-            if (this.centerSensor.get()){
+            if (this.centerSensor.get()) {
                 System.out.println("Center Sensor on");
             }
         }
@@ -125,28 +116,31 @@ public class Team342Robot extends SimpleRobot {
         while (isOperatorControl() && isEnabled()) {
             double x = this.driveController.getX();
             double y = this.driveController.getY();
-
-            double rotation = this.driveController.getRawAxis(4);
-            double armValue = this.armController.getY() * -1;
-            System.out.println("Arm Value: " + armValue);
-            System.out.println("X: " + x + ", Y: " + y + ", Z: " + rotation);
-
+            double armValue = this.driveController.getRawAxis(4)* -1;
+            double rotation = 0.0;
+            if(this.driveController.getRawButton(5)&&this.driveController.getRawButton(6)){
+                rotation = 0.0;
+            }else if (this.driveController.getRawButton(5)){
+                rotation = -0.75;
+            }else if(this.driveController.getRawButton(6)){
+                rotation = 0.75;
+            }
             this.drive.mecanumDrive_Cartesian(x, y, rotation, 0);
             this.armMotor.set(armValue);
 
-            if (this.armController.getRawButton(BUTTON_PULL_IN)) {
+            if (this.driveController.getRawButton(BUTTON_PULL_IN)) {
                 this.topGripper.set(-0.5);
                 this.bottomGripper.set(-0.5);
-            } else if (this.armController.getRawButton(BUTTON_ROTATE_UP)) {
+            } else if (this.driveController.getRawButton(BUTTON_ROTATE_UP)) {
                 this.topGripper.set(-0.5);
                 this.bottomGripper.set(0.5);
-            } else if (this.armController.getRawButton(BUTTON_ROTATE_DOWN)) {
+            } else if (this.driveController.getRawButton(BUTTON_ROTATE_DOWN)) {
                 this.topGripper.set(0.5);
                 this.bottomGripper.set(-0.5);
-            } else if (this.armController.getTrigger()) {
+            } else if (this.driveController.getRawButton(BUTTON_SPIT)) {
                 this.topGripper.set(0.5);
                 this.bottomGripper.set(0.5);
-            } else {   
+            } else {
                 this.topGripper.set(0.0);
                 this.bottomGripper.set(0.0);
             }
