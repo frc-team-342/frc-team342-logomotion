@@ -160,4 +160,12 @@ public class Team342Robot extends SimpleRobot {
             Timer.delay(0.005);
         }
     }
+    public void disabled(){
+        while(isDisabled()){
+            this.armMotor.set(0.0);
+            this.drive.stopMotor();
+            Timer.delay(0.005);
+        }
+    }
+
 }
