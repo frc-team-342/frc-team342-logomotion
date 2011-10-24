@@ -1,0 +1,6 @@
+MIDlet-Name: Team342Combined
+MIDlet-Version: 1.0.0
+MIDlet-Vendor: FIRST
+MIDlet-1: Team342Robot, , org.first.team342.Team342Robot
+MicroEdition-Profile: IMP-1.0
+MicroEdition-Configuration: CLDC-1.1
