@@ -24,7 +24,7 @@ import edu.wpi.first.wpilibj.Victor;
  * directory.
  */
 public class Team342Robot extends SimpleRobot {
-
+  
     public static final int DEFAULT_MODULE_SLOT = 4;
     // Drive Motor Constants.
     public static final int PWM_CHANNEL_LEFT_FRONT = 1;
@@ -158,6 +158,8 @@ public class Team342Robot extends SimpleRobot {
         while(isDisabled()){
             this.armMotor.set(0.0);
             this.drive.stopMotor();
+            this.topGripper.set(0.0);
+            this.bottomGripper.set(0.0);
             Timer.delay(0.005);
         }
     }
