@@ -24,7 +24,7 @@ import edu.wpi.first.wpilibj.Victor;
  * directory.
  */
 public class Team342Robot extends SimpleRobot {
-  
+
     public static final int DEFAULT_MODULE_SLOT = 4;
     // Drive Motor Constants.
     public static final int PWM_CHANNEL_LEFT_FRONT = 1;
@@ -35,8 +35,10 @@ public class Team342Robot extends SimpleRobot {
     public static final int PWM_CHANNEL_GRIPPER_TOP = 6;
     public static final int PWM_CHANNEL_GRIPPER_BOTTOM = 7;
     public static final int PWM_CHANNEL_ARM_MOTOR = 10;
+    //minibot
     public static final int PWM_CHANNEL_MINIBOT_ARM_RELEASE = 8;
     public static final int PWM_CHANNEL_MINIBOT_RELEASE = 9;
+    //Arm limit switches
     public static final int DIO_CHANNEL_ARM_LIMIT_BOTTOM = 1;
     public static final int DIO_CHANNEL_ARM_LIMIT_TOP = 2;
     // Light Sensor Constants.
@@ -93,17 +95,52 @@ public class Team342Robot extends SimpleRobot {
      * This function is called once each time the robot enters autonomous mode.
      */
     public void autonomous() {
+        System.out.println("In Autonomous Mode");
+
         while (isAutonomous() && isEnabled()) {
-            if (this.leftSensor.get()) {
-                System.out.println("Left Sensor on");
-            }
-            if (this.rightSensor.get()) {
-                System.out.println("Right Sensor on");
-            }
-            if (this.centerSensor.get()) {
-                System.out.println("Center Sensor on");
+            boolean sensors[] = {rightSensor.get(), centerSensor.get(), leftSensor.get()};
+
+            int value = binaryMagic(sensors);
+
+            switch (value) {
+                case 0:
+                    this.drive.tankDrive(0, 0);
+                    System.out.println("no sensors = true");
+                    break;
+                case 1:
+                    this.drive.tankDrive(0.7, 0.5);
+                    System.out.println("Right sensor = true");
+                    break;
+                case 2:
+                    this.drive.tankDrive(.5, .5);
+                    System.out.println("Center sensor = true");
+                    break;
+                case 3:
+                    this.drive.tankDrive(0.6, 0.5);
+                    System.out.println("Right and Center sensor =true");
+                    break;
+                case 4:
+                    this.drive.tankDrive(0.5, 0.7);
+                    System.out.println("Left sencor = true");
+                    break;
+                case 5:
+                    //cry ??????? 
+                    System.out.println("Left and Right =true");
+                    break;
+                case 6:
+                    this.drive.tankDrive(0.5, 0.6);
+                    System.out.println("Left and Center =true");
+                    break;
+                case 7:
+                    this.drive.tankDrive(0.0, 0.0);
+                    System.out.println("All sensors = true");
+                    break;
+                default:
+                    this.drive.tankDrive(0.0, 0.0);
+                    break;
             }
         }
+
         Timer.delay(0.005);
     }
 
@@ -116,13 +153,13 @@ public class Team342Robot extends SimpleRobot {
         while (isOperatorControl() && isEnabled()) {
             double x = this.driveController.getX();
             double y = this.driveController.getY();
-            double armValue = this.driveController.getRawAxis(4)* -1;
+            double armValue = this.driveController.getRawAxis(4) * -1;
             double rotation = 0.0;
-            if(this.driveController.getRawButton(5)&&this.driveController.getRawButton(6)){
+            if (this.driveController.getRawButton(5) && this.driveController.getRawButton(6)) {
                 rotation = 0.0;
-            }else if (this.driveController.getRawButton(5)){
+            } else if (this.driveController.getRawButton(5)) {
                 rotation = -0.75;
-            }else if(this.driveController.getRawButton(6)){
+            } else if (this.driveController.getRawButton(6)) {
                 rotation = 0.75;
             }
             this.drive.mecanumDrive_Cartesian(x, y, rotation, 0);
@@ -145,17 +182,18 @@ public class Team342Robot extends SimpleRobot {
                 this.bottomGripper.set(0.0);
             }
 
-            if (this.driveController.getRawButton(2) && this.driveController.getTrigger()){
+            if (this.driveController.getRawButton(2) && this.driveController.getTrigger()) {
                 this.releaseBot.setAngle(0.0);
-            }else if(this.driveController.getTrigger()){
+            } else if (this.driveController.getTrigger()) {
                 this.releaseArm.setAngle(0.0);
             }
 
             Timer.delay(0.005);
         }
     }
-    public void disabled(){
-        while(isDisabled()){
+
+    public void disabled() {
+        while (isDisabled()) {
             this.armMotor.set(0.0);
             this.drive.stopMotor();
             this.topGripper.set(0.0);
@@ -164,4 +202,16 @@ public class Team342Robot extends SimpleRobot {
         }
     }
 
+    public int binaryMagic(boolean[] input) {
+        int output = 0;
+        int placeValue = 1;
+        for (int i = 0; i < input.length; i++) {
+            if (input[i]) {
+                output += placeValue;
+            }
+
+            placeValue *= 2;
+        }
+        return output;
+    }
 }
