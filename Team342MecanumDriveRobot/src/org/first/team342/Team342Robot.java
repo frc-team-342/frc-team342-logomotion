@@ -39,12 +39,11 @@ public class Team342Robot extends SimpleRobot {
     public static final int PWM_CHANNEL_MINIBOT_ARM_RELEASE = 8;
     public static final int PWM_CHANNEL_MINIBOT_RELEASE = 9;
     //Arm limit switches
-    public static final int DIO_CHANNEL_ARM_LIMIT_BOTTOM = 1;
-    public static final int DIO_CHANNEL_ARM_LIMIT_TOP = 2;
+    public static final int DIO_CHANNEL_ARM_LIMIT = 1;
     // Light Sensor Constants.
-    public static final int DIO_CHANNEL_LIGHT_SENSOR_LEFT = 14;
-    public static final int DIO_CHANNEL_LIGHT_SENSOR_CENTER = 13;
-    public static final int DIO_CHANNEL_LIGHT_SENSOR_RIGHT = 12;
+    public static final int DIO_CHANNEL_LIGHT_SENSOR_LEFT = 11;
+    public static final int DIO_CHANNEL_LIGHT_SENSOR_CENTER = 10;
+    public static final int DIO_CHANNEL_LIGHT_SENSOR_RIGHT = 9;
     // Joystick Constants.
     public static final int BUTTON_ROTATE_UP = 5;
     public static final int BUTTON_ROTATE_DOWN = 3;
@@ -54,7 +53,7 @@ public class Team342Robot extends SimpleRobot {
     public static final int BUTTON_DEPLOY_MINIBOT = 3;
     //Joystick ports
     public static final int JOYSTICK_DRIVE_CONTROL = 1;
-    public static final int JOYSTICK_ARM_CONTROLL = 2;
+    public static final int JOYSTICK_ARM_CONTROL = 2;
     private RobotDrive drive;
     private Joystick driveController;
     private Joystick armController;
@@ -70,16 +69,19 @@ public class Team342Robot extends SimpleRobot {
     private DigitalInput leftSensor;
     private DigitalInput rightSensor;
     private DigitalInput centerSensor;
+    private DigitalInput limitSwitch;
 
     public Team342Robot() {
         super();
-
+        //init light sensors
         this.leftSensor = new DigitalInput(DEFAULT_MODULE_SLOT, DIO_CHANNEL_LIGHT_SENSOR_LEFT);
         this.rightSensor = new DigitalInput(DEFAULT_MODULE_SLOT, DIO_CHANNEL_LIGHT_SENSOR_RIGHT);
         this.centerSensor = new DigitalInput(DEFAULT_MODULE_SLOT, DIO_CHANNEL_LIGHT_SENSOR_CENTER);
+        //init limit switch
+        this.limitSwitch = new DigitalInput(DEFAULT_MODULE_SLOT, DIO_CHANNEL_ARM_LIMIT);
         //joysticks
         this.driveController = new Joystick(JOYSTICK_DRIVE_CONTROL);
-        this.armController = new Joystick(JOYSTICK_ARM_CONTROLL);
+        this.armController = new Joystick(JOYSTICK_ARM_CONTROL);
 
         this.releaseArm = new Servo(DEFAULT_MODULE_SLOT, PWM_CHANNEL_MINIBOT_ARM_RELEASE);
         this.releaseBot = new Servo(DEFAULT_MODULE_SLOT, PWM_CHANNEL_MINIBOT_RELEASE);
@@ -103,29 +105,47 @@ public class Team342Robot extends SimpleRobot {
      */
     public void autonomous() {
         System.out.println("In Autonomous Mode");
-
+        double initialTime = Timer.getFPGATimestamp();
+        boolean spit = false;
         while (isAutonomous() && isEnabled()) {
+            double currentTime = Timer.getFPGATimestamp();
             boolean sensors[] = {!rightSensor.get(), !centerSensor.get(), !leftSensor.get()};
-            System.out.println("Left "+ sensors[2]+" center " + sensors[1] + " Right " + sensors[0]);
+            System.out.println("Left " + sensors[2] + " center " + sensors[1] + " Right " + sensors[0]);
+            if (!limitSwitch.get()) {
+                armMotor.set(0.7);
+            } else {
+                armMotor.set(0.2);
+            }
+            if ((currentTime - initialTime) > 4.5 && (currentTime - initialTime) < 5.0) {
+                topGripper.set(-0.5);
+                bottomGripper.set(0.5);
+            } else if (spit) {
+                this.bottomGripper.set(0.5);
+                this.topGripper.set(0.5);
+            } else {
+                topGripper.set(0.0);
+                bottomGripper.set(0.0);
+            }
+            System.out.println("times " + initialTime + " " + currentTime);
             switch (this.binaryMagic(sensors)) {
                 case 0:
                     this.drive.tankDrive(0, 0);
                     System.out.println("Case 0");
                     break;
                 case 1:
-                    this.drive.tankDrive(0.7, -0.5);
+                    this.drive.tankDrive(0.6, -0.4);
                     System.out.println("Case 1");
                     break;
                 case 2:
-                    this.drive.tankDrive(.5, -.5);
+                    this.drive.tankDrive(.4, -.4);
                     System.out.println("Case 2");
                     break;
                 case 3:
-                    this.drive.tankDrive(0.6, -0.5);
+                    this.drive.tankDrive(0.5, -0.4);
                     System.out.println("Case 3");
                     break;
                 case 4:
-                    this.drive.tankDrive(0.5, -0.7);
+                    this.drive.tankDrive(0.4, -0.6);
                     System.out.println("Case 4");
                     break;
                 case 5:
@@ -133,12 +153,13 @@ public class Team342Robot extends SimpleRobot {
                     System.out.println("Case 5");
                     break;
                 case 6:
-                    this.drive.tankDrive(0.5, -0.6);
+                    this.drive.tankDrive(0.4, -0.5);
                     System.out.println("Case 6");
                     break;
                 case 7:
                     this.drive.tankDrive(0.0, 0.0);
                     System.out.println("Case 7");
+                    spit = true;
                     break;
                 default:
                     this.drive.tankDrive(0.0, 0.0);
@@ -146,7 +167,8 @@ public class Team342Robot extends SimpleRobot {
             }
         }
 
-        Timer.delay(0.005);
+        Timer.delay(
+                0.005);
     }
 
     /**
@@ -156,6 +178,7 @@ public class Team342Robot extends SimpleRobot {
         System.out.println("Is Operator Control: " + isOperatorControl());
         System.out.println("Is Enabled: " + isEnabled());
         while (isOperatorControl() && isEnabled()) {
+            System.out.println("Limit switch: " + limitSwitch.get());
             double x = this.driveController.getX();
             double y = this.driveController.getY();
             double armValue = this.armController.getY() * -1;
