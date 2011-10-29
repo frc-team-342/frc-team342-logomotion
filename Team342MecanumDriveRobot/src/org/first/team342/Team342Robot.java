@@ -7,6 +7,7 @@
 package org.first.team342;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Jaguar;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotDrive;
@@ -38,12 +39,14 @@ public class Team342Robot extends SimpleRobot {
     //minibot
     public static final int PWM_CHANNEL_MINIBOT_ARM_RELEASE = 8;
     public static final int PWM_CHANNEL_MINIBOT_RELEASE = 9;
-    //Arm limit switches
-    public static final int DIO_CHANNEL_ARM_LIMIT = 1;
+    public static final int DIO_CHANNEL_ARM_LIMIT_BOTTOM = 1;
+    public static final int DIO_CHANNEL_ARM_LIMIT_TOP = 2;
     // Light Sensor Constants.
     public static final int DIO_CHANNEL_LIGHT_SENSOR_LEFT = 11;
     public static final int DIO_CHANNEL_LIGHT_SENSOR_CENTER = 10;
     public static final int DIO_CHANNEL_LIGHT_SENSOR_RIGHT = 9;
+    //Arm limit switches
+    public static final int DIO_CHANNEL_ARM_LIMIT = 1;
     // Joystick Constants.
     public static final int BUTTON_ROTATE_UP = 5;
     public static final int BUTTON_ROTATE_DOWN = 3;
@@ -70,6 +73,9 @@ public class Team342Robot extends SimpleRobot {
     private DigitalInput rightSensor;
     private DigitalInput centerSensor;
     private DigitalInput limitSwitch;
+    private AutonomousGripperThread gripperRunnable;
+    //driverstation refrence
+    private DriverStation driversStation;
 
     public Team342Robot() {
         super();
@@ -104,29 +110,22 @@ public class Team342Robot extends SimpleRobot {
      * This function is called once each time the robot enters autonomous mode.
      */
     public void autonomous() {
-        System.out.println("In Autonomous Mode");
-        double initialTime = Timer.getFPGATimestamp();
-        boolean spit = false;
+        System.out.println("In Autonomous");
+
+        this.gripperRunnable = new AutonomousGripperThread(topGripper, bottomGripper);
+        Thread gripperThread = new Thread(gripperRunnable, "Gripper Thread");
+        gripperThread.start();
+
         while (isAutonomous() && isEnabled()) {
-            double currentTime = Timer.getFPGATimestamp();
             boolean sensors[] = {!rightSensor.get(), !centerSensor.get(), !leftSensor.get()};
-            System.out.println("Left " + sensors[2] + " center " + sensors[1] + " Right " + sensors[0]);
+
             if (!limitSwitch.get()) {
-                armMotor.set(0.7);
+                this.armMotor.set(0.7);
             } else {
-                armMotor.set(0.2);
+                this.armMotor.set(0.2);
             }
-            if ((currentTime - initialTime) > 4.5 && (currentTime - initialTime) < 5.0) {
-                topGripper.set(-0.5);
-                bottomGripper.set(0.5);
-            } else if (spit) {
-                this.bottomGripper.set(0.5);
-                this.topGripper.set(0.5);
-            } else {
-                topGripper.set(0.0);
-                bottomGripper.set(0.0);
-            }
-            System.out.println("times " + initialTime + " " + currentTime);
+
+            // drive control.
             switch (this.binaryMagic(sensors)) {
                 case 0:
                     this.drive.tankDrive(0, 0);
@@ -137,11 +136,11 @@ public class Team342Robot extends SimpleRobot {
                     System.out.println("Case 1");
                     break;
                 case 2:
-                    this.drive.tankDrive(.4, -.4);
+                    this.drive.tankDrive(.5, -.5);
                     System.out.println("Case 2");
                     break;
                 case 3:
-                    this.drive.tankDrive(0.5, -0.4);
+                    this.drive.tankDrive(0.6, -0.5);
                     System.out.println("Case 3");
                     break;
                 case 4:
@@ -153,13 +152,14 @@ public class Team342Robot extends SimpleRobot {
                     System.out.println("Case 5");
                     break;
                 case 6:
-                    this.drive.tankDrive(0.4, -0.5);
+                    this.drive.tankDrive(0.5, -0.6);
                     System.out.println("Case 6");
                     break;
                 case 7:
                     this.drive.tankDrive(0.0, 0.0);
                     System.out.println("Case 7");
-                    spit = true;
+                    this.topGripper.set(0.5);
+                    this.bottomGripper.set(0.5);
                     break;
                 default:
                     this.drive.tankDrive(0.0, 0.0);
@@ -233,7 +233,13 @@ public class Team342Robot extends SimpleRobot {
             this.drive.stopMotor();
             this.topGripper.set(0.0);
             this.bottomGripper.set(0.0);
+            
+            if (this.gripperRunnable != null) {
+                this.gripperRunnable.terminate();
+            }
+            
             Timer.delay(0.005);
+
         }
     }
 
