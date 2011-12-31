@@ -36,6 +36,7 @@ public class Team342Robot extends SimpleRobot {
     public static final int PWM_CHANNEL_GRIPPER_TOP = 6;
     public static final int PWM_CHANNEL_GRIPPER_BOTTOM = 7;
     public static final int PWM_CHANNEL_ARM_MOTOR = 10;
+    public static final int PWM_CHANNEL_PUCK_RETRACT_MOTOR = 5;
     //minibot
     public static final int PWM_CHANNEL_MINIBOT_ARM_RELEASE = 8;
     public static final int PWM_CHANNEL_MINIBOT_RELEASE = 9;
@@ -54,6 +55,7 @@ public class Team342Robot extends SimpleRobot {
     //public static final int BUTTON_SPIT = 8;
     public static final int BUTTON_DEPLOY_MINIBOT_ARM = 2;
     public static final int BUTTON_DEPLOY_MINIBOT = 3;
+    public static final int BUTTON_RETRACT_MINIBOT_ARM = 4;
     //Joystick ports
     public static final int JOYSTICK_DRIVE_CONTROL = 1;
     public static final int JOYSTICK_ARM_CONTROL = 2;
@@ -67,6 +69,7 @@ public class Team342Robot extends SimpleRobot {
     private SpeedController armMotor;
     private SpeedController topGripper;
     private SpeedController bottomGripper;
+    private SpeedController retractMinibot;
     private Servo releaseArm;
     private Servo releaseBot;
     private DigitalInput leftSensor;
@@ -100,6 +103,8 @@ public class Team342Robot extends SimpleRobot {
         this.armMotor = new Victor(DEFAULT_MODULE_SLOT, PWM_CHANNEL_ARM_MOTOR);
         this.topGripper = new Victor(DEFAULT_MODULE_SLOT, PWM_CHANNEL_GRIPPER_TOP);
         this.bottomGripper = new Victor(DEFAULT_MODULE_SLOT, PWM_CHANNEL_GRIPPER_BOTTOM);
+        this.retractMinibot = new Victor(DEFAULT_MODULE_SLOT,PWM_CHANNEL_PUCK_RETRACT_MOTOR);
+        
 
         this.drive = new RobotDrive(this.leftFront, this.leftRear, this.rightFront, this.rightRear);
         this.drive.setInvertedMotor(RobotDrive.MotorType.kRearRight, true);
@@ -149,7 +154,7 @@ public class Team342Robot extends SimpleRobot {
                     break;
                 case 5:
                     //cry ??????? 
-                    System.out.println("Case 5");
+                    System.out.println("Case 5 \n :(");
                     break;
                 case 6:
                     this.drive.tankDrive(0.5, -0.6);
@@ -221,12 +226,20 @@ public class Team342Robot extends SimpleRobot {
                 if (this.releaseBot.get() < 170.0) {
                     this.releaseBot.set(170.0);
                 }
+                if (this.driveController.getRawButton(BUTTON_RETRACT_MINIBOT_ARM)){
+                    this.retractMinibot.set(0.5);
+                }
+                else{
+                    this.retractMinibot.set(0.0);
+                }
             }
-
+            
+            if (this.driveController.getRawButton(BUTTON_PULL_IN)){
+                
+            }
             Timer.delay(0.005);
         }
     }
-
     public void disabled() {
         while (isDisabled()) {
             this.armMotor.set(0.0);
